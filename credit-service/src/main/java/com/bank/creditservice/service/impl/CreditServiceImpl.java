@@ -5,6 +5,7 @@ import com.bank.creditservice.repository.CreditRepository;
 import com.bank.creditservice.service.CreditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CreditServiceImpl implements CreditService {
 
     private final CreditRepository repository;
@@ -71,3 +73,4 @@ public class CreditServiceImpl implements CreditService {
     }
 
 }
+

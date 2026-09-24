@@ -5,11 +5,13 @@ import com.bank.customerservice.repository.CustomerRepository;
 import com.bank.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
@@ -43,3 +45,4 @@ public class CustomerServiceImpl implements CustomerService {
         return repository.deleteById(id);
     }
 }
+

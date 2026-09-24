@@ -5,6 +5,7 @@ import com.bank.transactionservice.repository.TransactionRepository;
 import com.bank.transactionservice.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import com.bank.transactionservice.util.Constants;
@@ -12,6 +13,7 @@ import com.bank.transactionservice.util.GenericUtil;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
@@ -56,3 +58,4 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findTop10ByProductId(creditCardId).take(Constants.LATEST_TRANSACTIONS_LIMIT);
     }
 }
+

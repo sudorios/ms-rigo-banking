@@ -4,6 +4,7 @@ import com.bank.yankiservice.model.YankiWallet;
 import com.bank.yankiservice.repository.YankiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class YankiServiceImpl implements YankiService {
 
     private final YankiRepository repository;
@@ -67,3 +69,4 @@ public class YankiServiceImpl implements YankiService {
                 .switchIfEmpty(Mono.just(false)); // Cuenta no encontrada
     }
 }
+

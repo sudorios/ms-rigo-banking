@@ -8,6 +8,7 @@ import com.bank.accountservice.util.Constants;
 import com.bank.accountservice.util.GenericUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository repository;
@@ -98,6 +100,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return repository.deleteById(id);
     }
 }
+
 
 
 
