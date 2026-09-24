@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class GenericUtil {
     
     private GenericUtil() {
-        // Restringe la instanciación
+        // Restringe la instanciaciÃ³n
     }
 
     public static String generateUniqueId() {
