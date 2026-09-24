@@ -1,2 +1,0 @@
-http://localhost:8085/api/car/672bae02077bfeb5056b92a3
-http://localhost:8085/api/car
