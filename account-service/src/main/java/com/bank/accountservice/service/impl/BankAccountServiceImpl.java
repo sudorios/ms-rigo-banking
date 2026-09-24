@@ -85,8 +85,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     public Mono<BankAccount> update(String id, BankAccount account) {
         return repository.findById(id).flatMap(existingAccount -> {
             if (GenericUtil.isNotNull(account.getBalance())) existingAccount.setBalance(account.getBalance());
-            if (GenericUtil.isNotNull(account.getMaxMovements())) existingAccount.setMaxMovements(account.getMaxMovements());
-            if (GenericUtil.isNotNull(account.getMaintenanceFree())) existingAccount.setMaintenanceFree(account.getMaintenanceFree());
+            if (GenericUtil.isNotNull(account.getMaxMovements()))
+                existingAccount.setMaxMovements(account.getMaxMovements());
+            if (GenericUtil.isNotNull(account.getMaintenanceFree()))
+                existingAccount.setMaintenanceFree(account.getMaintenanceFree());
             return repository.save(existingAccount);
         });
     }
