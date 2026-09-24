@@ -36,11 +36,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public Mono<Customer> update(String id, Customer entity) {
-        return repository.findById(id)
-                .flatMap(existing -> {
-                    entity.setId(existing.getId());
-                    return repository.save(entity);
-                });
+        return repository.findById(id).flatMap(existing -> {
+            entity.setId(existing.getId());
+            return repository.save(entity);
+        });
     }
 
     @Transactional

@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "$(Customer.ToLower())s")
+@Document(collection = "customers")
 public class Customer {
     @Id
     private String id;
@@ -22,5 +24,6 @@ public class Customer {
     private String customerType;
     private String profile;
     private String status;
-    private java.time.LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 }
+
