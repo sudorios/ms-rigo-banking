@@ -1,0 +1,36 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/v1/bankaccounts/**
+        - id: credit-service
+          uri: lb://credit-service
+          predicates:
+            - Path=/api/v1/credits/**
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/v1/transactions/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+        - id: yanki-service
+          uri: lb://yanki-service
+          predicates:
+            - Path=/api/v1/yanki/**

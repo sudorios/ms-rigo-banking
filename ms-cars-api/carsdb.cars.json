@@ -1,0 +1,27 @@
+[{
+  "_id": {
+    "$oid": "672bae02077bfeb5056b92a3"
+  },
+  "brand": "Hyundai",
+  "model": "Elantra",
+  "price": "190000",
+  "status": "1"
+},
+{
+  "_id": {
+    "$oid": "672baead077bfeb5056b92a4"
+  },
+  "brand": "Hyundai",
+  "model": "Tucson",
+  "price": "320000",
+  "status": "1"
+},
+{
+  "_id": {
+    "$oid": "672baead077bfeb5056b92a5"
+  },
+  "brand": "Hyundai",
+  "model": "i30",
+  "price": "220000",
+  "status": "0"
+}]

@@ -1,0 +1,135 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: bank_mongo
+    ports:
+      - "27017:27017"
+    restart: always
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: bank_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: bank_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: bank_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  config-server:
+    image: ghcr.io/sudorios/ms-banking-config-server:latest
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    restart: always
+
+  eureka-server:
+    image: ghcr.io/sudorios/ms-banking-eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - config-server
+    restart: always
+
+  api-gateway:
+    image: ghcr.io/sudorios/ms-banking-api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+    restart: always
+
+  customer-service:
+    image: ghcr.io/sudorios/ms-banking-customer-service:latest
+    container_name: customer-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/bankdb
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+      - mongo
+    restart: always
+
+  account-service:
+    image: ghcr.io/sudorios/ms-banking-account-service:latest
+    container_name: account-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/bankdb
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+      - mongo
+    restart: always
+
+  credit-service:
+    image: ghcr.io/sudorios/ms-banking-credit-service:latest
+    container_name: credit-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/bankdb
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+      - mongo
+    restart: always
+
+  transaction-service:
+    image: ghcr.io/sudorios/ms-banking-transaction-service:latest
+    container_name: transaction-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/bankdb
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+      - mongo
+      - kafka
+      - redis
+    restart: always
+
+  yanki-service:
+    image: ghcr.io/sudorios/ms-banking-yanki-service:latest
+    container_name: yanki-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/bankdb
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+    depends_on:
+      - eureka-server
+      - mongo
+      - kafka
+      - redis
+    restart: always
