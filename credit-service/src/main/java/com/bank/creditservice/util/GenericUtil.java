@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class GenericUtil {
     
     private GenericUtil() {
-        // Restringe la instanciación
+        // Restringe la instanciacion
     }
 
     public static String generateUniqueId() {
@@ -17,5 +17,13 @@ public class GenericUtil {
     public static String getCurrentFormattedDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.now().format(formatter);
+    }
+    
+    public static boolean isNull(Object obj) {
+        return obj == null;
+    }
+    
+    public static boolean isNotNull(Object obj) {
+        return obj != null;
     }
 }
