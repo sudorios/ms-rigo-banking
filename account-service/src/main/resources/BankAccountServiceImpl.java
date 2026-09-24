@@ -60,17 +60,17 @@ public class BankAccountServiceImpl implements BankAccountService {
                     // 2. Reglas VIP y PYME
                     boolean hasCreditCard = credits.stream().anyMatch(c -> "CREDIT_CARD".equalsIgnoreCase(c.getCreditType()));
                     if ("VIP".equalsIgnoreCase(customer.getProfile()) && !hasCreditCard) {
-                        return Mono.error(new RuntimeException("Un cliente VIP necesita tener una tarjeta de crédito activa."));
+                        return Mono.error(new RuntimeException("Un cliente VIP necesita tener una tarjeta de crÃ©dito activa."));
                     }
                     if ("PYME".equalsIgnoreCase(customer.getProfile()) && !hasCreditCard) {
-                        return Mono.error(new RuntimeException("Un cliente PYME necesita tener una tarjeta de crédito activa."));
+                        return Mono.error(new RuntimeException("Un cliente PYME necesita tener una tarjeta de crÃ©dito activa."));
                     }
 
                     // 3. Reglas de Tipo de Cliente y Cuentas
                     return repository.findAllByCustomerId(customer.getId()).collectList()
                             .flatMap(accounts -> {
                                 if ("PERSONAL".equalsIgnoreCase(customer.getCustomerType())) {
-                                    // Máximo 1 de cada tipo
+                                    // MÃ¡ximo 1 de cada tipo
                                     long countSameType = accounts.stream()
                                             .filter(a -> a.getAccountType().equalsIgnoreCase(entity.getAccountType()))
                                             .count();

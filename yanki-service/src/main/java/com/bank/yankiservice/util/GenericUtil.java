@@ -7,18 +7,18 @@ import java.time.format.DateTimeFormatter;
 public class GenericUtil {
     
     private GenericUtil() {
-        // Restringe la instanciación
+        // Restringe la instanciaciÃ³n
     }
 
     /**
-     * Genera un identificador único (UUID) para transacciones.
+     * Genera un identificador Ãºnico (UUID) para transacciones.
      */
     public static String generateTransactionId() {
         return UUID.randomUUID().toString();
     }
 
     /**
-     * Obtiene la fecha y hora actual en un formato estándar.
+     * Obtiene la fecha y hora actual en un formato estÃ¡ndar.
      */
     public static String getCurrentFormattedDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

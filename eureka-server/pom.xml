@@ -41,6 +41,12 @@
 		</dependency>
 
 		
+			<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+			<version>1.18.32</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -51,7 +57,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-		</dependencies>
+				<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+			<version>1.18.32</version>
+		</dependency>
+	</dependencies>
 	</dependencyManagement>
 
 	<build>
@@ -64,6 +76,8 @@
 	</build>
 
 </project>
+
+
 
 
 
