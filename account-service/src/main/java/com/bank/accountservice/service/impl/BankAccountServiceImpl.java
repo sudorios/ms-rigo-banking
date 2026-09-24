@@ -64,30 +64,29 @@ public class BankAccountServiceImpl implements BankAccountService {
     private Mono<BankAccount> saveAccountWithDefaults(BankAccount account, String customerType) {
         account.setAccountNumber(GenericUtil.generateUniqueId());
         account.setCreatedAt(GenericUtil.getCurrentFormattedDate());
-        if (account.getBalance() == null) {
+        if (GenericUtil.isNull(account.getBalance())) {
             account.setBalance(BigDecimal.ZERO);
         }
         String accType = account.getAccountType().toUpperCase();
         if (accType.equals(Constants.ACCOUNT_SAVINGS)) {
             account.setMaintenanceFree(1);
-            account.setMaxMovements(5); // lÃƒÂ­mite mÃƒÂ¡ximo de movimientos mensuales (ejemplo)
+            account.setMaxMovements(5);
         } else if (accType.equals(Constants.ACCOUNT_CURRENT)) {
-            account.setMaintenanceFree(0); // cobra mantenimiento
-            account.setMaxMovements(-1); // sin lÃƒÂ­mite
+            account.setMaintenanceFree(0);
+            account.setMaxMovements(-1);
         } else if (accType.equals(Constants.ACCOUNT_FIXED)) {
             account.setMaintenanceFree(1);
-            account.setMaxMovements(1); // un solo movimiento de retiro o depÃƒÂ³sito (el dÃƒÂ­a de retiro)
+            account.setMaxMovements(1);
         }
-
         return repository.save(account);
     }
 
     @Override
     public Mono<BankAccount> update(String id, BankAccount account) {
         return repository.findById(id).flatMap(existingAccount -> {
-            if (account.getBalance() != null) existingAccount.setBalance(account.getBalance());
-            if (account.getMaxMovements() != null) existingAccount.setMaxMovements(account.getMaxMovements());
-            if (account.getMaintenanceFree() != null) existingAccount.setMaintenanceFree(account.getMaintenanceFree());
+            if (GenericUtil.isNotNull(account.getBalance())) existingAccount.setBalance(account.getBalance());
+            if (GenericUtil.isNotNull(account.getMaxMovements())) existingAccount.setMaxMovements(account.getMaxMovements());
+            if (GenericUtil.isNotNull(account.getMaintenanceFree())) existingAccount.setMaintenanceFree(account.getMaintenanceFree());
             return repository.save(existingAccount);
         });
     }
@@ -97,6 +96,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return repository.deleteById(id);
     }
 }
+
 
 
 
