@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository repository;
@@ -43,6 +42,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return repository.findByCustomerId(customerId);
     }
 
+    @Transactional
     @Override
     public Mono<BankAccount> save(BankAccount account) {
         return webClientBuilder.build().get().uri(CUSTOMER_SERVICE_URL + account.getCustomerId()).retrieve().bodyToMono(CustomerDto.class).switchIfEmpty(Mono.error(new RuntimeException("Cliente no encontrado"))).flatMap(customer -> {
@@ -86,6 +86,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return repository.save(account);
     }
 
+    @Transactional
     @Override
     public Mono<BankAccount> update(String id, BankAccount account) {
         return repository.findById(id).flatMap(existingAccount -> {
@@ -98,11 +99,13 @@ public class BankAccountServiceImpl implements BankAccountService {
         });
     }
 
+    @Transactional
     @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);
     }
 }
+
 
 
 

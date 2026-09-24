@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CreditServiceImpl implements CreditService {
 
     private final CreditRepository repository;
@@ -41,6 +40,7 @@ public class CreditServiceImpl implements CreditService {
         return repository.findAllByCustomerId(customerId);
     }
 
+    @Transactional
     @Override
     public Mono<Credit> save(Credit entity) {
         return webClientBuilder.build().get().uri(Constants.CUSTOMER_API_URL + entity.getCustomerId()).retrieve().bodyToMono(CustomerDto.class).switchIfEmpty(Mono.error(new RuntimeException(Constants.ERROR_CUSTOMER_NOT_FOUND))).flatMap(customer -> repository.findAllByCustomerId(customer.getId()).collectList().flatMap(credits -> {
@@ -62,6 +62,7 @@ public class CreditServiceImpl implements CreditService {
         }));
     }
 
+    @Transactional
     @Override
     public Mono<Credit> update(String id, Credit entity) {
         return repository.findById(id).flatMap(existing -> {
@@ -70,11 +71,13 @@ public class CreditServiceImpl implements CreditService {
         });
     }
 
+    @Transactional
     @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);
     }
 
 }
+
 
 

@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class YankiServiceImpl implements YankiService {
 
     private final YankiRepository repository;
@@ -72,5 +71,6 @@ public class YankiServiceImpl implements YankiService {
                 .switchIfEmpty(Mono.just(false)); // Cuenta no encontrada
     }
 }
+
 
 

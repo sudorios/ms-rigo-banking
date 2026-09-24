@@ -13,7 +13,6 @@ import com.bank.transactionservice.util.GenericUtil;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
@@ -30,11 +29,13 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findById(id);
     }
 
+    @Transactional
     @Override
     public Mono<Transaction> save(Transaction entity) {
         return repository.save(entity);
     }
 
+    @Transactional
     @Override
     public Mono<Transaction> update(String id, Transaction entity) {
         return repository.findById(id).flatMap(existing -> {
@@ -43,6 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
+    @Transactional
     @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);
@@ -62,5 +64,6 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findTop10ByProductId(creditCardId).take(Constants.LATEST_TRANSACTIONS_LIMIT);
     }
 }
+
 
 

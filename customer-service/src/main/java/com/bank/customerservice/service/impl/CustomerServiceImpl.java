@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
@@ -28,11 +27,13 @@ public class CustomerServiceImpl implements CustomerService {
         return repository.findById(id);
     }
 
+    @Transactional
     @Override
     public Mono<Customer> save(Customer entity) {
         return repository.save(entity);
     }
 
+    @Transactional
     @Override
     public Mono<Customer> update(String id, Customer entity) {
         return repository.findById(id)
@@ -42,10 +43,12 @@ public class CustomerServiceImpl implements CustomerService {
                 });
     }
 
+    @Transactional
     @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);
     }
 }
+
 
 
