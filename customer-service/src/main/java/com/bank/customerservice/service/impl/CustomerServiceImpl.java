@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import com.bank.customerservice.util.Constants;
 import com.bank.customerservice.util.GenericUtil;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -34,11 +35,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public Mono<Customer> save(Customer entity) {
-        if (!Constants.CUSTOMER_TYPE_PERSONAL.equalsIgnoreCase(entity.getCustomerType()) && 
-            !Constants.CUSTOMER_TYPE_BUSINESS.equalsIgnoreCase(entity.getCustomerType())) {
+        if (!Constants.CUSTOMER_TYPE_PERSONAL.equalsIgnoreCase(entity.getCustomerType()) && !Constants.CUSTOMER_TYPE_BUSINESS.equalsIgnoreCase(entity.getCustomerType())) {
             return Mono.error(new RuntimeException(Constants.ERROR_INVALID_CUSTOMER_TYPE));
         }
-        
         entity.setCreatedAt(LocalDateTime.now());
         if (GenericUtil.isNull(entity.getStatus())) {
             entity.setStatus(Constants.STATUS_ACTIVE);

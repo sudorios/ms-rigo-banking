@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 import com.bank.transactionservice.util.Constants;
 import com.bank.transactionservice.util.GenericUtil;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,24 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public Mono<Transaction> save(Transaction entity) {
+        if (GenericUtil.isNull(entity.getAmount()) || entity.getAmount() <= 0) {
+            return Mono.error(new RuntimeException(Constants.ERROR_INVALID_AMOUNT));
+        }
+        
+        if (!Constants.TX_TYPE_DEPOSIT.equalsIgnoreCase(entity.getTransactionType()) && 
+            !Constants.TX_TYPE_WITHDRAWAL.equalsIgnoreCase(entity.getTransactionType()) &&
+            !Constants.TX_TYPE_PAYMENT.equalsIgnoreCase(entity.getTransactionType())) {
+            return Mono.error(new RuntimeException(Constants.ERROR_INVALID_TX_TYPE));
+        }
+
+        entity.setTransactionDate(LocalDateTime.now());
+        if (GenericUtil.isNull(entity.getTransactionNumber())) {
+            entity.setTransactionNumber(GenericUtil.generateUniqueId());
+        }
+        if (GenericUtil.isNull(entity.getFee())) {
+            entity.setFee(0.0);
+        }
+
         return repository.save(entity);
     }
 
@@ -40,7 +60,9 @@ public class TransactionServiceImpl implements TransactionService {
     public Mono<Transaction> update(String id, Transaction entity) {
         return repository.findById(id).flatMap(existing -> {
             entity.setId(existing.getId());
-            return repository.save(entity);
+            if (GenericUtil.isNotNull(entity.getAmount())) existing.setAmount(entity.getAmount());
+            if (GenericUtil.isNotNull(entity.getFee())) existing.setFee(entity.getFee());
+            return repository.save(existing);
         });
     }
 
@@ -53,8 +75,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     @Override
     public Flux<Transaction> getHistoryByProduct(String productId, String startDate, String endDate) {
-        java.time.LocalDateTime start = java.time.LocalDateTime.parse(startDate);
-        java.time.LocalDateTime end = java.time.LocalDateTime.parse(endDate);
+        LocalDateTime start = LocalDateTime.parse(startDate);
+        LocalDateTime end = LocalDateTime.parse(endDate);
         return repository.findHistoryByProductId(productId, start, end);
     }
 
@@ -64,6 +86,3 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findTop10ByProductId(creditCardId).take(Constants.LATEST_TRANSACTIONS_LIMIT);
     }
 }
-
-
-
