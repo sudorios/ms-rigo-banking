@@ -21,7 +21,7 @@ jobs:
           - credit-service
           - customer-service
           - eureka-server
-          - ms-cars-api
+
           - transaction-service
           - yanki-service
     permissions:
