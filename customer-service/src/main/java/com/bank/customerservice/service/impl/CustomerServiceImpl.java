@@ -16,11 +16,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Customer> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<Customer> findById(String id) {
         return repository.findById(id);
@@ -45,4 +47,5 @@ public class CustomerServiceImpl implements CustomerService {
         return repository.deleteById(id);
     }
 }
+
 

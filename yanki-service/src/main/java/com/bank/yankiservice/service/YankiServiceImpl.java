@@ -17,16 +17,19 @@ public class YankiServiceImpl implements YankiService {
 
     private final YankiRepository repository;
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<YankiWallet> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<YankiWallet> findById(String id) {
         return repository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<YankiWallet> findByPhoneNumber(String phoneNumber) {
         return repository.findByPhoneNumber(phoneNumber);
@@ -69,4 +72,5 @@ public class YankiServiceImpl implements YankiService {
                 .switchIfEmpty(Mono.just(false)); // Cuenta no encontrada
     }
 }
+
 

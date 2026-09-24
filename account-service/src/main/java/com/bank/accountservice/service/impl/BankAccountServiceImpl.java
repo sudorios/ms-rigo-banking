@@ -25,16 +25,19 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private static final String CUSTOMER_SERVICE_URL = "http://customer-service/api/v1/customers/";
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<BankAccount> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<BankAccount> findById(String id) {
         return repository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<BankAccount> findByCustomerId(String customerId) {
         return repository.findByCustomerId(customerId);
@@ -100,6 +103,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return repository.deleteById(id);
     }
 }
+
 
 
 

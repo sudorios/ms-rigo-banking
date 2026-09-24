@@ -23,16 +23,19 @@ public class CreditServiceImpl implements CreditService {
     private final CreditRepository repository;
     private final WebClient.Builder webClientBuilder;
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Credit> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<Credit> findById(String id) {
         return repository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Credit> findByCustomerId(String customerId) {
         return repository.findAllByCustomerId(customerId);
@@ -73,4 +76,5 @@ public class CreditServiceImpl implements CreditService {
     }
 
 }
+
 

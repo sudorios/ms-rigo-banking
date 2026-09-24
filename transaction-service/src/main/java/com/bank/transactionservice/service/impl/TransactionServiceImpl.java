@@ -18,11 +18,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Transaction> findAll() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Mono<Transaction> findById(String id) {
         return repository.findById(id);
@@ -46,6 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Transaction> getHistoryByProduct(String productId, String startDate, String endDate) {
         java.time.LocalDateTime start = java.time.LocalDateTime.parse(startDate);
@@ -53,9 +56,11 @@ public class TransactionServiceImpl implements TransactionService {
         return repository.findHistoryByProductId(productId, start, end);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Flux<Transaction> getLatest10ByCard(String creditCardId) {
         return repository.findTop10ByProductId(creditCardId).take(Constants.LATEST_TRANSACTIONS_LIMIT);
     }
 }
+
 
