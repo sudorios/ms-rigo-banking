@@ -44,31 +44,24 @@ public class YankiServiceImpl implements YankiService {
 
     @Override
     public Mono<YankiWallet> associateDebitCard(String phoneNumber, String debitCardNumber) {
-        return repository.findByPhoneNumber(phoneNumber)
-                .flatMap(wallet -> {
-                    wallet.setAssociatedDebitCardNumber(debitCardNumber);
-                    return repository.save(wallet);
-                });
+        return repository.findByPhoneNumber(phoneNumber).flatMap(wallet -> {
+            wallet.setAssociatedDebitCardNumber(debitCardNumber);
+            return repository.save(wallet);
+        });
     }
 
     @Override
     public Mono<Boolean> sendMoney(String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
-        return repository.findByPhoneNumber(fromPhoneNumber)
-                .zipWith(repository.findByPhoneNumber(toPhoneNumber))
-                .flatMap(tuple -> {
-                    YankiWallet from = tuple.getT1();
-                    YankiWallet to = tuple.getT2();
-
-                    if (from.getBalance().compareTo(amount) >= 0) {
-                        from.setBalance(from.getBalance().subtract(amount));
-                        to.setBalance(to.getBalance().add(amount));
-                        return repository.save(from)
-                                .then(repository.save(to))
-                                .thenReturn(true);
-                    }
-                    return Mono.just(false); // Saldo insuficiente
-                })
-                .switchIfEmpty(Mono.just(false)); // Cuenta no encontrada
+        return repository.findByPhoneNumber(fromPhoneNumber).zipWith(repository.findByPhoneNumber(toPhoneNumber)).flatMap(tuple -> {
+            YankiWallet from = tuple.getT1();
+            YankiWallet to = tuple.getT2();
+            if (from.getBalance().compareTo(amount) >= 0) {
+                from.setBalance(from.getBalance().subtract(amount));
+                to.setBalance(to.getBalance().add(amount));
+                return repository.save(from).then(repository.save(to)).thenReturn(true);
+            }
+            return Mono.just(false); // Saldo insuficiente
+        }).switchIfEmpty(Mono.just(false)); // Cuenta no encontrada
     }
 }
 

@@ -26,11 +26,11 @@ spring:
           uri: lb://transaction-service
           predicates:
             - Path=/api/v1/transactions/**
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
         - id: yanki-service
           uri: lb://yanki-service
           predicates:
             - Path=/api/v1/yanki/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

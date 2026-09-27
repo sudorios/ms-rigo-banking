@@ -2,7 +2,8 @@ name: Build and Deploy to Contabo
 
 on:
   push:
-    branches: [ "main", "develop", "feature/*" ]
+    tags:
+      - 'v*'  # Se ejecutará al empujar tags que empiecen con 'v' (ej. v1.0.0)
 
 env:
   REGISTRY: ghcr.io

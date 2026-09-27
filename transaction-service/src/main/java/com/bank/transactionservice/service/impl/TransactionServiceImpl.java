@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import com.bank.transactionservice.util.Constants;
 import com.bank.transactionservice.util.GenericUtil;
+
 import java.time.LocalDateTime;
 
 @Service
@@ -37,13 +38,9 @@ public class TransactionServiceImpl implements TransactionService {
         if (GenericUtil.isNull(entity.getAmount()) || entity.getAmount() <= 0) {
             return Mono.error(new RuntimeException(Constants.ERROR_INVALID_AMOUNT));
         }
-        
-        if (!Constants.TX_TYPE_DEPOSIT.equalsIgnoreCase(entity.getTransactionType()) && 
-            !Constants.TX_TYPE_WITHDRAWAL.equalsIgnoreCase(entity.getTransactionType()) &&
-            !Constants.TX_TYPE_PAYMENT.equalsIgnoreCase(entity.getTransactionType())) {
+        if (!Constants.TX_TYPE_DEPOSIT.equalsIgnoreCase(entity.getTransactionType()) && !Constants.TX_TYPE_WITHDRAWAL.equalsIgnoreCase(entity.getTransactionType()) && !Constants.TX_TYPE_PAYMENT.equalsIgnoreCase(entity.getTransactionType())) {
             return Mono.error(new RuntimeException(Constants.ERROR_INVALID_TX_TYPE));
         }
-
         entity.setTransactionDate(LocalDateTime.now());
         if (GenericUtil.isNull(entity.getTransactionNumber())) {
             entity.setTransactionNumber(GenericUtil.generateUniqueId());
@@ -51,7 +48,6 @@ public class TransactionServiceImpl implements TransactionService {
         if (GenericUtil.isNull(entity.getFee())) {
             entity.setFee(0.0);
         }
-
         return repository.save(entity);
     }
 
