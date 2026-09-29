@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "$(Credit.ToLower())s")
+@Document(collection = "credits")
 public class Credit {
     @Id
     private String id;
