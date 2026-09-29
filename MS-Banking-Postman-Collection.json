@@ -1,0 +1,160 @@
+{
+  "info": {
+    "name": "MS Banking - Contabo Env",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://95.111.252.221:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Customer Service",
+      "item": [
+        {
+          "name": "Get Customers",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/customers"
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Perez\",\n  \"documentType\": \"DNI\",\n  \"documentNumber\": \"76543210\",\n  \"customerType\": \"PERSONAL\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/customers"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Account Service",
+      "item": [
+        {
+          "name": "Get Accounts",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/bankaccounts"
+          }
+        },
+        {
+          "name": "Create Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"12345\",\n  \"accountType\": \"SAVING\",\n  \"balance\": 500.0\n}"
+            },
+            "url": "{{base_url}}/api/v1/bankaccounts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Credit Service",
+      "item": [
+        {
+          "name": "Get Credits",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/credits"
+          }
+        },
+        {
+          "name": "Create Credit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"12345\",\n  \"creditType\": \"PERSONAL\",\n  \"limit\": 2000.0,\n  \"balance\": 2000.0\n}"
+            },
+            "url": "{{base_url}}/api/v1/credits"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Transaction Service",
+      "item": [
+        {
+          "name": "Get Transactions",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/transactions"
+          }
+        },
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"abcde123\",\n  \"amount\": 150.0,\n  \"type\": \"DEPOSIT\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/transactions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Yanki Service",
+      "item": [
+        {
+          "name": "Get Yanki Wallets",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/yanki"
+          }
+        },
+        {
+          "name": "Create Yanki Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"987654321\",\n  \"imei\": \"123456789012345\",\n  \"email\": \"juan@yanki.com\",\n  \"balance\": 0.0\n}"
+            },
+            "url": "{{base_url}}/api/v1/yanki"
+          }
+        }
+      ]
+    }
+  ]
+}
