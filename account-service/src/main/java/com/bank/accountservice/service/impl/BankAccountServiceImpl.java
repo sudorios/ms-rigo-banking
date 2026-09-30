@@ -3,6 +3,7 @@ package com.bank.accountservice.service.impl;
 import com.bank.accountservice.dto.CustomerDto;
 import com.bank.accountservice.model.BankAccount;
 import com.bank.accountservice.repository.BankAccountRepository;
+import com.bank.accountservice.repository.CustomerDebtRepository;
 import com.bank.accountservice.service.BankAccountService;
 import com.bank.accountservice.util.Constants;
 import com.bank.accountservice.util.GenericUtil;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository repository;
+    private final CustomerDebtRepository debtRepository;
     private final WebClient.Builder webClientBuilder;
 
     private static final String CUSTOMER_SERVICE_URL = "http://customer-service/api/v1/customers/";
@@ -45,25 +47,32 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Transactional
     @Override
     public Mono<BankAccount> save(BankAccount account) {
-        return webClientBuilder.build().get().uri(CUSTOMER_SERVICE_URL + account.getCustomerId()).retrieve().bodyToMono(CustomerDto.class).switchIfEmpty(Mono.error(new RuntimeException("Cliente no encontrado"))).flatMap(customer -> {
-            String type = customer.getCustomerType().toUpperCase();
-            String accType = account.getAccountType().toUpperCase();
-            if (type.equals(Constants.CLIENT_PERSONAL)) {
-                return repository.findByCustomerId(account.getCustomerId()).filter(acc -> acc.getAccountType().equalsIgnoreCase(accType)).hasElements().flatMap(exists -> {
-                    if (exists) {
-                        return Mono.error(new RuntimeException("El cliente personal ya tiene una cuenta de tipo " + accType));
+        return debtRepository.findById(account.getCustomerId())
+                .defaultIfEmpty(new com.bank.accountservice.model.CustomerDebt(account.getCustomerId(), false))
+                .flatMap(debt -> {
+                    if (debt.getHasOverdueDebt() != null && debt.getHasOverdueDebt()) {
+                        return Mono.error(new RuntimeException("El cliente posee una deuda vencida. No puede adquirir un nuevo producto."));
                     }
-                    return saveAccountWithDefaults(account, type);
+                    return webClientBuilder.build().get().uri(CUSTOMER_SERVICE_URL + account.getCustomerId()).retrieve().bodyToMono(CustomerDto.class).switchIfEmpty(Mono.error(new RuntimeException("Cliente no encontrado"))).flatMap(customer -> {
+                        String type = customer.getCustomerType().toUpperCase();
+                        String accType = account.getAccountType().toUpperCase();
+                        if (type.equals(Constants.CLIENT_PERSONAL)) {
+                            return repository.findByCustomerId(account.getCustomerId()).filter(acc -> acc.getAccountType().equalsIgnoreCase(accType)).hasElements().flatMap(exists -> {
+                                if (exists) {
+                                    return Mono.error(new RuntimeException("El cliente personal ya tiene una cuenta de tipo " + accType));
+                                }
+                                return saveAccountWithDefaults(account, type);
+                            });
+                        } else if (type.equals(Constants.CLIENT_BUSINESS)) {
+                            if (accType.equals(Constants.ACCOUNT_SAVINGS) || accType.equals(Constants.ACCOUNT_FIXED)) {
+                                return Mono.error(new RuntimeException("El cliente empresarial no puede tener una cuenta de Ahorro o Plazo Fijo"));
+                            }
+                            return saveAccountWithDefaults(account, type);
+                        } else {
+                            return Mono.error(new RuntimeException("Tipo de cliente desconocido"));
+                        }
+                    });
                 });
-            } else if (type.equals(Constants.CLIENT_BUSINESS)) {
-                if (accType.equals(Constants.ACCOUNT_SAVINGS) || accType.equals(Constants.ACCOUNT_FIXED)) {
-                    return Mono.error(new RuntimeException("El cliente empresarial no puede tener una cuenta de Ahorro o Plazo Fijo"));
-                }
-                return saveAccountWithDefaults(account, type);
-            } else {
-                return Mono.error(new RuntimeException("Tipo de cliente desconocido"));
-            }
-        });
     }
 
     private Mono<BankAccount> saveAccountWithDefaults(BankAccount account, String customerType) {

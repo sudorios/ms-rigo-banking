@@ -1,6 +1,8 @@
 package com.bank.creditservice.service.impl;
 
+import com.bank.creditservice.dto.CustomerDto;
 import com.bank.creditservice.model.Credit;
+import com.bank.creditservice.producer.CustomerDebtProducer;
 import com.bank.creditservice.repository.CreditRepository;
 import com.bank.creditservice.service.CreditService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class CreditServiceImpl implements CreditService {
 
     private final CreditRepository repository;
     private final WebClient.Builder webClientBuilder;
+    private final CustomerDebtProducer debtProducer;
 
     @Transactional(readOnly = true)
     @Override
@@ -58,7 +61,10 @@ public class CreditServiceImpl implements CreditService {
             if (GenericUtil.isNull(entity.getAvailableBalance())) entity.setAvailableBalance(entity.getLimitAmount());
             if (GenericUtil.isNull(entity.getCurrentDebt())) entity.setCurrentDebt(0.0);
             if (GenericUtil.isNull(entity.getHasOverdueDebt())) entity.setHasOverdueDebt(false);
-            return repository.save(entity);
+            
+            return repository.save(entity).doOnSuccess(saved -> {
+                debtProducer.sendCustomerDebtStatus(saved.getCustomerId(), saved.getHasOverdueDebt());
+            });
         }));
     }
 
@@ -67,7 +73,9 @@ public class CreditServiceImpl implements CreditService {
     public Mono<Credit> update(String id, Credit entity) {
         return repository.findById(id).flatMap(existing -> {
             entity.setId(existing.getId());
-            return repository.save(entity);
+            return repository.save(entity).doOnSuccess(saved -> {
+                debtProducer.sendCustomerDebtStatus(saved.getCustomerId(), saved.getHasOverdueDebt());
+            });
         });
     }
 

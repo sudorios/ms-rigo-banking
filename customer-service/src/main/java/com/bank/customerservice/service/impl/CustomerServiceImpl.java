@@ -4,6 +4,7 @@ import com.bank.customerservice.model.Customer;
 import com.bank.customerservice.repository.CustomerRepository;
 import com.bank.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -19,6 +20,8 @@ import java.time.LocalDateTime;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
+    private final ReactiveRedisTemplate<String, Customer> redisTemplate;
+    private static final String CACHE_KEY = "Customer:";
 
     @Transactional(readOnly = true)
     @Override
@@ -29,7 +32,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional(readOnly = true)
     @Override
     public Mono<Customer> findById(String id) {
-        return repository.findById(id);
+        return redisTemplate.opsForValue().get(CACHE_KEY + id)
+                .switchIfEmpty(repository.findById(id)
+                        .flatMap(customer -> redisTemplate.opsForValue().set(CACHE_KEY + id, customer)
+                                .thenReturn(customer)));
     }
 
     @Transactional
@@ -42,7 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (GenericUtil.isNull(entity.getStatus())) {
             entity.setStatus(Constants.STATUS_ACTIVE);
         }
-        return repository.save(entity);
+        return repository.save(entity)
+                .flatMap(savedCustomer -> redisTemplate.opsForValue().set(CACHE_KEY + savedCustomer.getId(), savedCustomer)
+                        .thenReturn(savedCustomer));
     }
 
     @Transactional
@@ -52,13 +60,16 @@ public class CustomerServiceImpl implements CustomerService {
             if (GenericUtil.isNotNull(entity.getName())) existing.setName(entity.getName());
             if (GenericUtil.isNotNull(entity.getLastName())) existing.setLastName(entity.getLastName());
             if (GenericUtil.isNotNull(entity.getStatus())) existing.setStatus(entity.getStatus());
-            return repository.save(existing);
+            return repository.save(existing)
+                    .flatMap(savedCustomer -> redisTemplate.opsForValue().set(CACHE_KEY + savedCustomer.getId(), savedCustomer)
+                            .thenReturn(savedCustomer));
         });
     }
 
     @Transactional
     @Override
     public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+        return repository.deleteById(id)
+                .then(redisTemplate.opsForValue().delete(CACHE_KEY + id).then());
     }
 }

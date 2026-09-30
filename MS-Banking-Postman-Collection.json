@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "MS Banking - Contabo Env",
+    "name": "MS Banking - Contabo Env (Full Data)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -25,15 +25,10 @@
           "name": "Create Customer",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Juan Perez\",\n  \"documentType\": \"DNI\",\n  \"documentNumber\": \"76543210\",\n  \"customerType\": \"PERSONAL\"\n}"
+              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Perez\",\n  \"documentType\": \"DNI\",\n  \"documentNumber\": \"76543210\",\n  \"customerType\": \"PERSONAL\",\n  \"profile\": \"VIP\"\n}"
             },
             "url": "{{base_url}}/api/v1/customers"
           }
@@ -54,15 +49,10 @@
           "name": "Create Account",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customerId\": \"12345\",\n  \"accountType\": \"SAVING\",\n  \"balance\": 500.0\n}"
+              "raw": "{\n  \"customerId\": \"aqui-pon-el-id-del-customer\",\n  \"accountType\": \"SAVING\",\n  \"balance\": 1000.0,\n  \"maintenanceFree\": true,\n  \"maxMovements\": 10\n}"
             },
             "url": "{{base_url}}/api/v1/bankaccounts"
           }
@@ -83,15 +73,10 @@
           "name": "Create Credit",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"customerId\": \"12345\",\n  \"creditType\": \"PERSONAL\",\n  \"limit\": 2000.0,\n  \"balance\": 2000.0\n}"
+              "raw": "{\n  \"customerId\": \"aqui-pon-el-id-del-customer\",\n  \"creditType\": \"PERSONAL\",\n  \"limit\": 5000.0,\n  \"balance\": 0.0\n}"
             },
             "url": "{{base_url}}/api/v1/credits"
           }
@@ -112,15 +97,10 @@
           "name": "Create Transaction",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountId\": \"abcde123\",\n  \"amount\": 150.0,\n  \"type\": \"DEPOSIT\"\n}"
+              "raw": "{\n  \"sourceProductId\": \"aqui-pon-el-id-de-la-cuenta\",\n  \"targetProductId\": \"opcional-id-destino\",\n  \"productType\": \"ACCOUNT\",\n  \"transactionType\": \"DEPOSITO\",\n  \"amount\": 150.0,\n  \"fee\": 0.0\n}"
             },
             "url": "{{base_url}}/api/v1/transactions"
           }
@@ -141,15 +121,10 @@
           "name": "Create Yanki Wallet",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"phoneNumber\": \"987654321\",\n  \"imei\": \"123456789012345\",\n  \"email\": \"juan@yanki.com\",\n  \"balance\": 0.0\n}"
+              "raw": "{\n  \"documentNumber\": \"76543210\",\n  \"phoneNumber\": \"987654321\",\n  \"imei\": \"123456789012345\",\n  \"email\": \"juan@yanki.com\",\n  \"balance\": 0.0,\n  \"associatedDebitCardNumber\": \"1111222233334444\"\n}"
             },
             "url": "{{base_url}}/api/v1/yanki"
           }
